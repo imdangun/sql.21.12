@@ -115,49 +115,52 @@ select employee_id, hire_date,
 from employees
 where months_between(sysdate, hire_date) < 200;
 
-select round(to_date('14-feb-23'), 'month') from dual;
-select round(to_date('15-feb-23'), 'month') from dual;
-select round(to_date('16-feb-23'), 'month') from dual;
-
-select round(to_date('01-jan-23'), 'year') from dual;
-select round(to_date('30-jun-23'), 'year') from dual;
-select round(to_date('01-jul-23'), 'year') from dual;
-
-select trunc(to_date('14-feb-23'), 'month') from dual;
-select trunc(to_date('15-feb-23'), 'month') from dual;
-select trunc(to_date('16-feb-23'), 'month') from dual;
-
-select trunc(to_date('01-jan-23'), 'year') from dual;
-select trunc(to_date('30-jun-23'), 'year') from dual;
-select trunc(to_date('01-jul-23'), 'year') from dual;
-
-select employee_id, hire_date,
-    round(hire_date, 'month'),
-    trunc(hire_date, 'month')
-from employees
-where hire_date like '%07';
 
 --1.오늘 날짜를 출력한다. 칼럼명은 Date 이다.
- 
+ select sysdate "Date"
+ from dual;
 
 --2.사원들의 사원번호, 이름, 월급, 15.5% 인상된 월급(별명: New Salary, 정수로 표시)을 출력한다.
-
+select employee_id, last_name, salary, round(salary * 1.155) "New Salary"
+from employees;
 
 --3.위 쿼리에서, 인상된 월급과 전월급의 차액을 담은 칼럼을 추가로 출력한다.
+select employee_id, last_name, salary,
+    round(salary * 1.155) "New Salary",
+    round(salary * 1.155) - salary "Increase"
+from employees;
 
-
---4.이름이 J 나 A 나 M 으로 시작하는 사원들의 이름, 글자수를 출력한다.
+--4.이름이 J 나 A 나 M 으로 시작하는 사원들의 이름, 이름 글자수를 출력한다.
 --  이름은 첫번째 글자만 대문자, 나머지는 소문자로 출력한다.
+select initcap(last_name) "Name", length(last_name) "Length"
+from employees
+where last_name like 'J%' or
+    last_name like 'A%' or
+    last_name like 'M%'
+order by last_name;
 
 --5.사원들의 이름과 근속 개월수를 출력한다. 근속개월수 칼럼명은 MONTHS_WORKED 이다.
 --  잔여일자는 반올림 처리한다.
+select last_name, round(months_between(sysdate, hire_date)) months_worked
+from employees
+order by months_worked;
 
 --6.사원들의 이름과 월급을 출력한다. 월급은 15글자로 표시한다. 빈 부분은 $ 로 채운다.
+select last_name, lpad(salary, 15, '$') salary
+from employees;
 
 --7.사원들의 이름과 함께 급여액 그래프를 출력한다.
 --  이름은 8 글자까지만 표시하고, 급여액은 * 로 표시한다. * 하나가 $1,000를 나타낸다.
 --  칼럼명은 EMPLOYEES_AND_THEIR_SALARIES 이다.
+select rpad(last_name, 8)|| ', ' || rpad(' ', salary / 1000 + 1, '*') 
+    EMPLOYEES_AND_THEIR_SALARIES
+from employees
+order by salary desc;
 
 --8.90번 부서원들의 이름과 근속 주수를 출력한다.
 --  주수의 칼럼명은 TENURE 이다. 근속주수에서 소수점 이하는 내림한다.
 --  근속주수 내림차순 정렬한다.
+select last_name, trunc((sysdate - hire_date) / 7) as tenure
+from employees
+where department_id = 90
+order by tenure desc;
