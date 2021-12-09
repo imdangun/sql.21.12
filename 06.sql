@@ -55,4 +55,33 @@ where d.department_id = 60; -- error
 select e.last_name, d.department_name
 from employees e join departments d
 using(department_id)
-where manager_id = 60; -- error
+where manager_id = 100; -- error
+
+select e.last_name, d.department_name
+from employees e join departments d
+using(department_id)
+where d.manager_id = 100;
+
+select e.last_name, d.department_name
+from employees e join departments d
+using(department_id)
+where employee_id = 100;
+
+select e.last_name, d.department_name
+from employees e join departments d
+using(department_id)
+where e.employee_id = 100;
+
+select e.employee_id , e.last_name, e.department_id,
+    d.department_id, d.location_id
+from employees e join departments d
+on (e.department_id = d.department_id);
+
+select employee_id, city, department_name
+from employees e join departments d
+on e.department_id = d.department_id
+join locations l
+on d.location_id = l.location_id;
+
+-- 과제] 위 문장을, using 으로 변환하라.
+
