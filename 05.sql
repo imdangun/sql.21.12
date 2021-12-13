@@ -170,10 +170,10 @@ having min(salary) > 6000
 order by min(salary) desc;
 
 --10. 2000년, 2001년, 2002년, 2003년도별 입사자 수를 찾는다.
-select sum(decode(to_char(hire_date, 'yyyy'), 2000, 1, 0)) "2000",
-    sum(decode(to_char(hire_date, 'yyyy'), 2001, 1, 0)) "2001",
-    sum(decode(to_char(hire_date, 'yyyy'), 2002, 1, 0)) "2002",
-    sum(decode(to_char(hire_date, 'yyyy'), 2003, 1, 0)) "2003"
+select sum(decode(to_char(hire_date, 'yyyy'), '2000', 1, 0)) "2000",
+    sum(decode(to_char(hire_date, 'yyyy'), '2001', 1, 0)) "2001",
+    sum(decode(to_char(hire_date, 'yyyy'), '2002', 1, 0)) "2002",
+    sum(decode(to_char(hire_date, 'yyyy'), '2003', 1, 0)) "2003"
 from employees;
 
 select count(case when hire_date like '%00' then 1
