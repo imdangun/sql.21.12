@@ -120,39 +120,59 @@ select * from team;
 -- 1. EMPLOYEES 테이블에서 일부 데이타를 감추고 싶다.
 --    사원번호, 이름, 부서번호로 구성된 뷰 EMPLOYEES_VU 를 만든다.
 --    이름 칼럼은 EMPLOYEE 로 한다.
- 
+ create view employee_vu as
+    select employee_id, last_name employee, department_id
+    from employees;
+
 
 --2. EMPLOYEES_VU가 유효한지 확인한다. 뷰의 내용을 뽑아본다.
-
+select * from employee_vu;
  
 
 --3. EMPLOYEES_VU 를 이용해서, 사원들의 이름, 부서번호를 출력한다.
-
+select employee, department_id
+from employee_vu;
  
 
 --4. 50번 부서원들의 사원번호, 이름, 부서번호로 DEPT50 뷰를 만든다.
 --   각 칼럼명은 EMPNO, EMPLOYEE, DEPTNO 로 한다.
 --   뷰를 통해서 사원들이 다른 부서로 재배치 되지 않도록 한다.
-
+create or replace view dept50(empno, employee, deptno) as
+    select employee_id, last_name, department_id
+    from employees
+    where department_id = 50
+    with check option constraint dept50_ck;
 
 
 --5. DEPT50 뷰의 구조를 본다.
+ desc dept50;
  
 
 --6. 뷰를 시험한다. Matos를 80번 부서로 배치해 본다.
 --   with check option 제약조건 때문에 에러가 발생할 것이다.
-
+update dept50
+set deptno = 80
+where employee = 'Matos';
  
 
 --7. DEPT 테이블의 primary key column으로 사용될 sequence가 필요하다.
 --   시퀀스는 300에서 시작하여, 최대 1000까지 뽑을 수 있다. 10씩 증가한다.
 --   시퀀스 이름은 DEPT_ID_SEQ 이다.
+create sequence dept_id_seq
+    start with 300
+    increment by 10
+    maxvalue 1000;
 
 
 --8. 위 시퀀스를 이용해서 Education 부서를 추가한다.
+insert into dept
+values(dept_id_seq.nextval, 'Education');
 
 
 --9. DEPT 테이블의 NAME 칼럼에 대해 index를 만든다.
+create index dept_name_idx
+on dept(name);
 
 
 --10. EMPLOYEES 테이블의 synonum EMPS 를 만든다.
+create synonym emps for employees;
