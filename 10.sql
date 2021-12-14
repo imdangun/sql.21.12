@@ -127,3 +127,90 @@ insert into b values(31, 9); -- error, fk
 alter table b disable constraint b_aid_fk;
 insert into b values(31, 9);
 
+alter table b enable validate constraint b_aid_fk; -- error, fk
+alter table b enable novalidate constraint b_aid_fk;
+
+insert into b values(32, 8); --error, fk
+
+--
+drop table sub_departments;
+
+create table sub_departments as
+    select department_id dept_id, department_name dept_name
+    from hr.departments;
+
+select *
+from sub_departments;
+
+--
+drop table users cascade constraints;
+
+create table users(
+user_id number(3));
+
+desc users
+
+alter table users add (user_name varchar2(10));
+desc users
+
+alter table users modify (user_name number(7));
+desc users
+
+alter table users drop column user_name;
+desc users
+
+--
+insert into users values(1);
+
+alter table users read only;
+insert into users values(2); -- error
+
+alter table users read write;
+insert into users values(2);
+
+commit;
+
+
+--HR user 로 실습한다.
+--1. 다음 구조의 DEPT 테이블을 만든다.
+drop table dept cascade constraints;
+
+create table dept(
+id number(7) constraint dept_id_pk primary key,
+name varchar2(25));
+
+--2. DEPARTMENTS 테이블의 데이타로 DEPT 테이블을 채운다.
+insert into dept
+    select department_id, department_name
+    from departments;
+
+
+--3. 다음 구조의 EMP 테이블을 만든다.
+drop table emp cascade constraints;
+
+create table emp(
+id number(7),
+last_name varchar2(25),
+first_name varchar2(25),
+dept_id number(7) constraint emp_deptid_fk references dept(id));
+
+--4. EMPLOYEES 테이블의 사원번호, first_name, last_name, 월급, 부서번호 칼럼을 이용해서,
+--   EMPLOYEES2 테이블을 만든다.
+drop table employees2 cascade constraints;
+
+create table employees2 as
+    select employee_id id, first_name, last_name, salary, department_id dept_id
+    from employees;
+
+--5. EMPLOYEES2 테이블을 read only로 설정한다.
+alter table employees2 read only;
+
+--6. 다음 row를 EMPLOYEE2 테이블에 넣으려 시도하면, 에러가 발생한다.
+insert into employees2
+values(34, 'Grant', 'Marcie', 5678, 10); -- error, read only
+
+--7. EMPLOYEES2 테이블을 read write로 설정한다.
+alter table employees2 read write;
+
+--8. EMPLOYEES2 테이블을 삭제한다.
+drop table employees2 cascade constraints;
