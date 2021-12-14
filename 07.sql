@@ -64,7 +64,7 @@ where salary <all (select salary
                     where job_id = 'IT_PROG')
 and job_id <> 'IT_PROG';
 
--- subquery return 값이 null인 경우
+-- subquery return row 가 없으면 main query return row 가 없다.
 select last_name, salary, department_id
 from employees
 where salary in (select salary

@@ -93,12 +93,12 @@ from employees
 where department_id > 90
 group by department_id;
 
-select job_id, sum(salary) payroll
+select job_id, sum(salary) 
 from employees
 where job_id not like '%REP%'
 group by job_id
 having sum(salary) > 13000
-order by payroll;
+order by 2;
 
 select max(avg(salary))
 from employees
